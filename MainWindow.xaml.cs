@@ -153,6 +153,7 @@ namespace stnd_72_v2
             //Start listening.
             Thread listenThread = new Thread(new ThreadStart(Listening));
             listenThread.Start();
+            listenThread.IsBackground = true;//делает поток фоновым который завершается по закрытию основного приложения
             //Change state to indicate the server starts.
             _isServerStarted = true;
 
@@ -251,7 +252,7 @@ namespace stnd_72_v2
             {
                 // Allow the user to set the appropriate properties.
                 serialPort1.PortName = textBox_comport.Text;
-                serialPort1.BaudRate = 1500000;
+                serialPort1.BaudRate = 115200;
                 serialPort1.DataReceived += OnDataReceived;
 
                 // Set the read/write timeouts
