@@ -30,7 +30,7 @@
         <Button x:Name="button_panel_330" Content="панель 330" HorizontalAlignment="Left" Margin="36,82,0,0" VerticalAlignment="Top" Width="75" Click="button_adc0_Click"/>
         <Button x:Name="button_console" Content="console" HorizontalAlignment="Left" Margin="36,45,0,0" VerticalAlignment="Top" Width="75" Click="button_Click_1"/>
         <Button x:Name="button_info" Content="INFO" HorizontalAlignment="Left" Margin="36,119,0,0" VerticalAlignment="Top" Width="75" Click="button_info_Click"/>
-        <Button x:Name="button_12V_vkl" Content="вкл +12V" HorizontalAlignment="Left" Margin="219,119,0,0" VerticalAlignment="Top" Width="75" Click="button_12V_vkl_Click"/>
+        <Button x:Name="button_12V_vkl" Content="выкл +12V" HorizontalAlignment="Left" Margin="219,119,0,0" VerticalAlignment="Top" Width="75" Click="button_12V_vkl_Click"/>
 
     </Grid>
 </Window>

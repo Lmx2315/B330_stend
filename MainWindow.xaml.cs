@@ -56,6 +56,7 @@ namespace stnd_72_v2
         public byte LS;
         public byte SINHR;
         public byte OFCH;
+        public int VKL_12V=0;
 
         public CHANNEL CH1;
         public CHANNEL CH2;
@@ -361,8 +362,8 @@ namespace stnd_72_v2
             UInt64 sch_cmd = 0;
             MSG = config;
 
-            Timer1.Tick += new EventHandler(Timer1_Tick);
-            Timer1.Interval = new TimeSpan(0, 0, 0, 0, 100);
+         // Timer1.Tick += new EventHandler(Timer1_Tick);
+         // Timer1.Interval = new TimeSpan(0, 0, 0, 0, 100);
          // Timer1.Start();//запускаю таймер проверяющий приём по UDP
 
             try 
@@ -597,14 +598,14 @@ namespace stnd_72_v2
   
             SolidColorBrush myBrush = new SolidColorBrush(Colors.Red);
 
-            if (Convert.ToString(button_12V_vkl.Content)== "вкл +12V")
+            if (Convert.ToString(button_12V_vkl.Content)== "выкл +12V")
             {
-                button_12V_vkl.Content = "выкл +12V";
+                button_12V_vkl.Content = "вкл +12V";
                 a[3] = 1;
                 Timer2.Start();//запускаю таймер проверяющий приём по UDP
             } else
             {
-                button_12V_vkl.Content = "вкл +12V";
+                button_12V_vkl.Content = "выкл +12V";
                 a[3] = 0;
                 Timer2.Stop();//запускаю таймер проверяющий приём по UDP
             }
@@ -768,6 +769,8 @@ namespace stnd_72_v2
                         CH3.PWR = ((BitConverter.ToInt32(a, 0)) >> 5) & 1;
                         CH2.PWR = ((BitConverter.ToInt32(a, 0)) >> 6) & 1;
                         CH1.PWR = ((BitConverter.ToInt32(a, 0)) >> 7) & 1;
+                        VKL_12V = ((BitConverter.ToInt32(a, 0)) >> 8) & 1;
+
           //              Debug.WriteLine("PWR    :" + BitConverter.ToInt32(a, 0));
           //              Debug.WriteLine("CH8.PWR:" + CH8.PWR);
           //              Debug.WriteLine("CH7.PWR:" + CH7.PWR);
@@ -1036,12 +1039,13 @@ namespace stnd_72_v2
             else
             {
                 if (button_udp_init_072.Background!= Brushes.Green) button_udp_init_072.Background = Brushes.Green;
+                if (VKL_12V==1) button_12V_vkl.Content="вкл +12V";
+                else            button_12V_vkl.Content="выкл +12V";
                 FLAG_SYS_INIT = 1;//есть связь с блоком , можно запрашивать состояние
             }
             FLAG_TIMER_1++;
 
             byte[] a = new byte[1];
-
          
             a[0] = Convert.ToByte(100);    
             UDP_SEND(

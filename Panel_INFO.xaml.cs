@@ -97,17 +97,16 @@ namespace stnd_72_v2
                 txt_U_ch8.Text = Convert.ToString(Convert.ToDouble(main.CH8.U) / 100) + " В";
 
               
-                    if (main.CH1.PWR == 1) btn_ch1.Content = "выкл"; else btn_ch1.Content = "вкл";
-                    if (main.CH2.PWR == 1) btn_ch2.Content = "выкл"; else btn_ch2.Content = "вкл";
-                    if (main.CH3.PWR == 1) btn_ch3.Content = "выкл"; else btn_ch3.Content = "вкл";
-                    if (main.CH4.PWR == 1) btn_ch4.Content = "выкл"; else btn_ch4.Content = "вкл";
-                    if (main.CH5.PWR == 1) btn_ch5.Content = "выкл"; else btn_ch5.Content = "вкл";
-                    if (main.CH6.PWR == 1) btn_ch6.Content = "выкл"; else btn_ch6.Content = "вкл";
-                    if (main.CH7.PWR == 1) btn_ch7.Content = "выкл"; else btn_ch7.Content = "вкл";
-                    if (main.CH8.PWR == 1) btn_ch8.Content = "выкл"; else btn_ch8.Content = "вкл";
+                if (main.CH1.PWR == 1) btn_ch1.Content = "выкл"; else btn_ch1.Content = "вкл";
+                if (main.CH2.PWR == 1) btn_ch2.Content = "выкл"; else btn_ch2.Content = "вкл";
+                if (main.CH3.PWR == 1) btn_ch3.Content = "выкл"; else btn_ch3.Content = "вкл";
+                if (main.CH4.PWR == 1) btn_ch4.Content = "выкл"; else btn_ch4.Content = "вкл";
+                if (main.CH5.PWR == 1) btn_ch5.Content = "выкл"; else btn_ch5.Content = "вкл";
+                if (main.CH6.PWR == 1) btn_ch6.Content = "выкл"; else btn_ch6.Content = "вкл";
+                if (main.CH7.PWR == 1) btn_ch7.Content = "выкл"; else btn_ch7.Content = "вкл";
+                if (main.CH8.PWR == 1) btn_ch8.Content = "выкл"; else btn_ch8.Content = "вкл";
          
-                    main.FLAG_NEW_DATA = 0;
-                              
+                    main.FLAG_NEW_DATA = 0;                       
 
             }
         }
@@ -122,10 +121,24 @@ namespace stnd_72_v2
             }
         }
 
+        void ZXC ()
+        {
+            MainWindow main = this.Owner as MainWindow;
+
+            main.CH1.OFF = main.CH1.PWR;
+            main.CH2.OFF = main.CH2.PWR;
+            main.CH3.OFF = main.CH3.PWR;
+            main.CH4.OFF = main.CH4.PWR;
+            main.CH5.OFF = main.CH5.PWR;
+            main.CH6.OFF = main.CH6.PWR;
+            main.CH7.OFF = main.CH7.PWR;
+            main.CH8.OFF = main.CH8.PWR;
+        }
         private void btn_ch1_Click(object sender, RoutedEventArgs e)
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
+            ZXC();//
 
             if (Convert.ToString(btn_ch1.Content)=="вкл")
             {
@@ -152,7 +165,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch2.Content) == "вкл")
             {
                 btn_ch2.Content = "выкл";
@@ -180,7 +193,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch3.Content) == "вкл")
             {
                 btn_ch3.Content = "выкл";
@@ -207,7 +220,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch4.Content) == "вкл")
             {
                 btn_ch4.Content = "выкл";
@@ -234,7 +247,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch5.Content) == "вкл")
             {
                 btn_ch5.Content = "выкл";
@@ -261,7 +274,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch6.Content) == "вкл")
             {
                 btn_ch6.Content = "выкл";
@@ -288,7 +301,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch7.Content) == "вкл")
             {
                 btn_ch7.Content = "выкл";
@@ -315,7 +328,7 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             MainWindow main = this.Owner as MainWindow;
-
+            ZXC();//
             if (Convert.ToString(btn_ch8.Content) == "вкл")
             {
                 btn_ch8.Content = "выкл";
