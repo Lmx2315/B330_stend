@@ -116,7 +116,7 @@ namespace stnd_72_v2
         const uint MSG_PWR_CHANNEL = 150;
        public uint FLAG_NEW_DATA = 0; //флаг что пришли новые данные о состоянии блока
 
-        int N_STATE_MAX = 4;//максимальное число состояний стейт машины тестирования
+        int N_STATE_MAX = 6+1;//максимальное число состояний стейт машины тестирования
         int FLAG_SYS_INIT;
 
         public MAC MAC0_072;//переменная состояния блока МАС ethernet в 072
@@ -212,6 +212,7 @@ namespace stnd_72_v2
         System.Windows.Threading.DispatcherTimer Timer3 = new System.Windows.Threading.DispatcherTimer();
         public MainWindow()
         {
+            byte[] a = new byte[4];
             InitializeComponent();
             button_START.Content = "START";//пишем это тут чтобы потом условие проверки текста сразу срабатывало! а то ему что-то в тексте не нравится.
             Timer2.Tick += new EventHandler(Timer2_Tick);
@@ -222,6 +223,7 @@ namespace stnd_72_v2
             Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
             newForm = new form_consol1("console1");
             Start();//запускаю сервер UDP
+            UDP_SEND(100,a, 4, 0);
         }
 
         private void button_comport_send_Click(object sender, RoutedEventArgs e)
@@ -1071,8 +1073,10 @@ namespace stnd_72_v2
             ERROR_SCH = 0;   //счётчик ошибок
             label_INFO.Content = "";
             string curTimeLong = DateTime.Now.ToLongTimeString();
-            if (button_START.Content=="START")
+            if (Convert.ToString(button_START.Content)=="START")
             {
+                label_state.Visibility = Visibility.Visible;
+                label_state.Content = "";
                 TEST = true;
                 Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1700); //это надо чтобы успел позеленеть индикатор температуры, а то сбрасываются все светодиоды при тесте!
                 newForm.Clear_data();
@@ -1092,6 +1096,7 @@ namespace stnd_72_v2
                
             } else
             {
+                label_state.Visibility = Visibility.Hidden;
                 TEST = false;
                 Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
                 Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
@@ -1131,6 +1136,7 @@ namespace stnd_72_v2
         bool FLAG_TRX;
         int ERROR_SCH = 0;
 
+
         void STATE_MASHINE (int STATE)
         {
             int z = 0;
@@ -1142,7 +1148,7 @@ namespace stnd_72_v2
 
             FLAG_STATUS = true;//поднимаем флаг запроса! Квитанция должны его скинуть
             FLAG_TRX    = true;
-
+            label_state.Content = STATE_PROCESS.ToString();
             if (STATE == 1)//зажечь все светодиоды на панели
             {
                 console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:включить красные светодиоды !\r";                
@@ -1180,8 +1186,7 @@ namespace stnd_72_v2
                 LENGTH_DATA = 4;  //число данных в байтах
                 TIME_CMD = 0;
                 UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
-            }
-            else
+            } else
                 if (STATE == 3)//Проверить напряжение в каналах
             {
                 console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:проверить напряжение в каналах.\r";
@@ -1190,7 +1195,38 @@ namespace stnd_72_v2
                 LENGTH_DATA = 4;  //число данных в байтах
                 TIME_CMD = 0;
                 UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            } else
+            if (STATE == 4)//Проверить ID контроллеров LM
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:проверить ID контроллеров LM.\r";
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                CMD = 100;        //команда 100 - CMD_STATUS
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            } else
+            if (STATE == 5)//Проверить управление каналами питания - выключить каналы питания
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:выключить каналы питания.\r";
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1500);
+                ARRAY_data[3] = 0xff;
+                CMD = 4;        //команда 4 - CMD_CH_UP
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
             }
+            else
+            if (STATE == 6)//Проверить управление каналами питания - включить каналы питания
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:включить каналы питания.\r";
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                ARRAY_data[3] = 0x00;
+                CMD = 4;        //команда 4 - CMD_CH_UP
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            }
+
 
         }
 
@@ -1219,8 +1255,9 @@ namespace stnd_72_v2
                 //MessageBox.Show("Блок отлично работает!");
                 if (TEST==true)
                 {
+                    
                     if (ERROR_SCH == 0) label_INFO.Content = "ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО";
-                    else label_INFO.Content = "     ТЕСТЫ НЕ ПРОЙДЕНЫ!";
+                    else                label_INFO.Content = "     ТЕСТЫ НЕ ПРОЙДЕНЫ!";
                 }                
                 Timer3.Stop();
             }

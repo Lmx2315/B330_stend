@@ -25,6 +25,7 @@
         <Button x:Name="button_12V_vkl" Content="выкл +12V" HorizontalAlignment="Left" Margin="21,125,0,0" VerticalAlignment="Top" Width="75" Click="button_12V_vkl_Click" Visibility="Hidden"/>
         <Button x:Name="button_START" Content="START" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="63" Click="button_START_click" Height="57" FontWeight="Bold"/>
         <Label x:Name="label_INFO" Content="" HorizontalAlignment="Left" Margin="10,154,0,0" VerticalAlignment="Top" Width="198" FontWeight="Bold"/>
+        <Label x:Name="label_state" Content="0" HorizontalAlignment="Left" Margin="141,24,0,0" VerticalAlignment="Top" Height="49" Width="30" FontSize="36" Visibility="Hidden"/>
 
     </Grid>
 </Window>
