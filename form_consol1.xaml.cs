@@ -56,7 +56,8 @@ namespace stnd_72_v2
 
         public void Show_data (string a)
         {
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run(a)));
+   //       richTextBox.Document.Blocks.Add(new Paragraph(new Run(a)));
+            richTextBox.AppendText(a);
             richTextBox.ScrollToEnd();
         }
 
@@ -65,8 +66,8 @@ namespace stnd_72_v2
             MainWindow main = this.Owner as MainWindow;
             if (main != null)
             {
-               if (main.console_text!="") this.Show_data(main.console_text);
-                   main.console_text = "";
+                if (main.console_text != "") this.Show_data(main.console_text);
+                    main.console_text = "";
             }
         }
 

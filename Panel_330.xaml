@@ -5,24 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:stnd_72_v2"
         mc:Ignorable="d"
-        Title="Panel_330" Height="549.563" Width="296.288"
+        Title="Panel_330" Height="480" Width="200"
          Closing="DataWindow_Closing"
         >
-    <Grid HorizontalAlignment="Left" Width="286" Height="519" VerticalAlignment="Top">
-        <CheckBox x:Name="checkBox_isprav_ac_red" Content="ИСПР АЦ Кр" HorizontalAlignment="Left" Margin="23,49,0,0" VerticalAlignment="Top" Click="checkBox_isprav_ac_red_Click"/>
-        <CheckBox x:Name="checkBox_progr_red" Content="ПРОГР КР" HorizontalAlignment="Right" Margin="0,107,192,0" VerticalAlignment="Top" Click="checkBox_progr_red_Click"  />
-        <CheckBox x:Name="checkBox_temp_red" Content="ТЕМП Кр" HorizontalAlignment="Left" Margin="23,162,0,0" VerticalAlignment="Top" Click="checkBox_temp_red_Click" />
-        <CheckBox x:Name="checkBox_otkl_ac_red" Content="ОТКЛ АЦ" HorizontalAlignment="Left" Margin="23,214,0,0" VerticalAlignment="Top" Click="checkBox_otkl_ac_red_Click" />
-        <CheckBox x:Name="checkBox_ispr_j330_red" Content="ИСПР Я330 Кр" HorizontalAlignment="Left" Margin="23,266,0,0" VerticalAlignment="Top" Click="checkBox_ispr_j330_red_Click"/>
-        <CheckBox x:Name="checkBox_ls_red" Content="ЛС Кр" HorizontalAlignment="Left" Margin="23,320,0,0" VerticalAlignment="Top" Click="checkBox_ls_red_Click" />
-        <CheckBox x:Name="checkBox_sinhr_red" Content="СИНХР Кр" HorizontalAlignment="Left" Margin="23,375,0,0" VerticalAlignment="Top" Click="checkBox_sinhr_red_Click" />
-        <CheckBox x:Name="checkBox_ofch_red" Content="ОФЧ Кр" HorizontalAlignment="Left" Margin="23,429,0,0" VerticalAlignment="Top" Click="checkBox_ofch_red_Click" />
-        <CheckBox x:Name="checkBox_isprav_ac_green" Content="ИСПР АЦ Зл" HorizontalAlignment="Left" Margin="23,70,0,0" VerticalAlignment="Top" Click="checkBox_isprav_ac_green_Click"/>
-        <CheckBox x:Name="checkBox_progr_green" Content="ПРОГР Зл" HorizontalAlignment="Right" Margin="0,128,193,0" VerticalAlignment="Top" Click="checkBox_progr_green_Click" />
-        <CheckBox x:Name="checkBox_temp_green" Content="ТЕМП Зл" HorizontalAlignment="Left" Margin="23,183,0,0" VerticalAlignment="Top" Click="checkBox_temp_green_Click"/>
-        <CheckBox x:Name="checkBox_ispr_j330_green" Content="ИСПР Я330 Зл" HorizontalAlignment="Left" Margin="23,287,0,0" VerticalAlignment="Top" Click="checkBox_ispr_j330_green_Click" />
-        <CheckBox x:Name="checkBox_ls_green" Content="ЛС Зл" HorizontalAlignment="Left" Margin="23,341,0,0" VerticalAlignment="Top" Click="checkBox_ls_green_Click" />
-        <CheckBox x:Name="checkBox_sinhr_green" Content="СИНХР Зл" HorizontalAlignment="Left" Margin="23,396,0,0" VerticalAlignment="Top" Click="checkBox_sinhr_green_Click" />
-        <CheckBox x:Name="checkBox_ofch_green" Content="ОФЧ Зл" HorizontalAlignment="Left" Margin="23,450,0,0" VerticalAlignment="Top" Click="checkBox_ofch_green_Click"/>
+    <Grid HorizontalAlignment="Left" Width="200" Height="450" VerticalAlignment="Top">
+        <CheckBox x:Name="checkBox_isprav_ac_red" Content="ИСПР АЦ Кр"      HorizontalAlignment="Left" Margin="20, 15,0,0" VerticalAlignment="Top" Click="checkBox_isprav_ac_red_Click"/>
+        <CheckBox x:Name="checkBox_progr_red" Content="ПРОГР КР"            HorizontalAlignment="Left" Margin="20, 73,0,0" VerticalAlignment="Top" Click="checkBox_progr_red_Click"  />
+        <CheckBox x:Name="checkBox_temp_red" Content="ТЕМП Кр"              HorizontalAlignment="Left" Margin="20,128,0,0" VerticalAlignment="Top" Click="checkBox_temp_red_Click" />
+        <CheckBox x:Name="checkBox_otkl_ac_red" Content="ОТКЛ АЦ"           HorizontalAlignment="Left" Margin="20,180,0,0" VerticalAlignment="Top" Click="checkBox_otkl_ac_red_Click" />
+        <CheckBox x:Name="checkBox_ispr_j330_red" Content="ИСПР Я330 Кр"    HorizontalAlignment="Left" Margin="20,232,0,0" VerticalAlignment="Top" Click="checkBox_ispr_j330_red_Click"/>
+        <CheckBox x:Name="checkBox_ls_red" Content="ЛС Кр"                  HorizontalAlignment="Left" Margin="20,286,0,0" VerticalAlignment="Top" Click="checkBox_ls_red_Click" />
+        <CheckBox x:Name="checkBox_sinhr_red" Content="СИНХР Кр"            HorizontalAlignment="Left" Margin="20,341,0,0" VerticalAlignment="Top" Click="checkBox_sinhr_red_Click" />
+        <CheckBox x:Name="checkBox_ofch_red" Content="ОФЧ Кр"               HorizontalAlignment="Left" Margin="20,395,0,0" VerticalAlignment="Top" Click="checkBox_ofch_red_Click" />
+        <CheckBox x:Name="checkBox_isprav_ac_green" Content="ИСПР АЦ Зл"    HorizontalAlignment="Left" Margin="20, 36,0,0" VerticalAlignment="Top" Click="checkBox_isprav_ac_green_Click"/>
+        <CheckBox x:Name="checkBox_progr_green" Content="ПРОГР Зл"          HorizontalAlignment="Left" Margin="20, 94,0,0" VerticalAlignment="Top" Click="checkBox_progr_green_Click" />
+        <CheckBox x:Name="checkBox_temp_green" Content="ТЕМП Зл"            HorizontalAlignment="Left" Margin="20,149,0,0" VerticalAlignment="Top" Click="checkBox_temp_green_Click"/>
+        <CheckBox x:Name="checkBox_ispr_j330_green" Content="ИСПР Я330 Зл"  HorizontalAlignment="Left" Margin="20,253,0,0" VerticalAlignment="Top" Click="checkBox_ispr_j330_green_Click" />
+        <CheckBox x:Name="checkBox_ls_green" Content="ЛС Зл"                HorizontalAlignment="Left" Margin="20,307,0,0" VerticalAlignment="Top" Click="checkBox_ls_green_Click" />
+        <CheckBox x:Name="checkBox_sinhr_green" Content="СИНХР Зл"          HorizontalAlignment="Left" Margin="20,362,0,0" VerticalAlignment="Top" Click="checkBox_sinhr_green_Click" />
+        <CheckBox x:Name="checkBox_ofch_green" Content="ОФЧ Зл"             HorizontalAlignment="Left" Margin="20,416,0,0" VerticalAlignment="Top" Click="checkBox_ofch_green_Click"/>
     </Grid>
 </Window>

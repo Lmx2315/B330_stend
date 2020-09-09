@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:stnd_72_v2"
         mc:Ignorable="d"
-        Title="form_consol1" Height="450" Width="332.969"
+        Title="form_consol1" Height="299.017" Width="508.723"
          Closing="DataWindow_Closing"
         >
     <Grid HorizontalAlignment="Left" >
-        <RichTextBox x:Name="richTextBox" TextChanged="richTextBox_TextChanged"   >
+        <RichTextBox x:Name="richTextBox" TextChanged="richTextBox_TextChanged" FontSize="16"   >
             <FlowDocument>
                 <FlowDocument.BindingGroup>
                     <BindingGroup/>
                 </FlowDocument.BindingGroup>
                 <Paragraph>
-                    <Run Text="RichTextBox"/>
+                    <Run Text="..."/>
                 </Paragraph>
             </FlowDocument>
         </RichTextBox>

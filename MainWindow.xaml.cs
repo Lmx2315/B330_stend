@@ -116,7 +116,7 @@ namespace stnd_72_v2
         const uint MSG_PWR_CHANNEL = 150;
        public uint FLAG_NEW_DATA = 0; //флаг что пришли новые данные о состоянии блока
 
-
+        int N_STATE_MAX = 4;//максимальное число состояний стейт машины тестирования
         int FLAG_SYS_INIT;
 
         public MAC MAC0_072;//переменная состояния блока МАС ethernet в 072
@@ -127,12 +127,13 @@ namespace stnd_72_v2
         Byte[] RCV = new byte[64000];
         int sch_packet = 0;
 
+        form_consol1 newForm;
+
         //----------ETH------------
         UdpClient _server = null;
         IPEndPoint _client = null;
         Thread _listenThread = null;
         private bool _isServerStarted = false;
-
         //-------------------eth-------------------------
         private void Start()
         {
@@ -208,15 +209,18 @@ namespace stnd_72_v2
 
         System.Windows.Threading.DispatcherTimer Timer1 = new System.Windows.Threading.DispatcherTimer();
         System.Windows.Threading.DispatcherTimer Timer2 = new System.Windows.Threading.DispatcherTimer();
-
+        System.Windows.Threading.DispatcherTimer Timer3 = new System.Windows.Threading.DispatcherTimer();
         public MainWindow()
         {
             InitializeComponent();
-
+            button_START.Content = "START";//пишем это тут чтобы потом условие проверки текста сразу срабатывало! а то ему что-то в тексте не нравится.
             Timer2.Tick += new EventHandler(Timer2_Tick);
             Timer2.Interval = new TimeSpan(0, 0, 0, 0, 250);
-     //     Timer2.Start();//запускаю таймер проверяющий приём по UDP
+            //     Timer2.Start();//запускаю таймер проверяющий приём по UDP
 
+            Timer3.Tick += new EventHandler(Timer3_Tick);
+            Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
+            newForm = new form_consol1("console1");
             Start();//запускаю сервер UDP
         }
 
@@ -572,10 +576,12 @@ namespace stnd_72_v2
          //   Debug.WriteLine(":" + Console_form[0]);
             if (Console_form[0] == false)
             {
-                form_consol1 newForm = new form_consol1("console1");
+           //   newForm = new form_consol1("console1");
+                newForm.Top = this.Top;
+                newForm.Left = this.Left;
+                newForm.Owner = this;            
                 Console_form[0] = true;
-                newForm.Show();
-                newForm.Owner = this;              
+                newForm.Show(); 
             }
         }
 
@@ -607,7 +613,7 @@ namespace stnd_72_v2
             {
                 button_12V_vkl.Content = "выкл +12V";
                 a[3] = 0;
-                Timer2.Stop();//запускаю таймер проверяющий приём по UDP
+ //              Timer2.Stop();//останавливаю таймер проверяющий приём по UDP
             }
 
             UDP_SEND(
@@ -644,14 +650,7 @@ namespace stnd_72_v2
         int FLAG_TIMER_1 = 0;
         private void Timer1_Tick(object sender, EventArgs e)
         {            
-           // if (FLAG_UDP_RCV == 1)
-            {
-      //          Debug.WriteLine("FLAG_UDP_RCV:" + FLAG_UDP_RCV);
-         //       FLAG_UDP_RCV = 0;
-             //   UDP_BUF_DESCRIPT();
-
-            }
-     //       FLAG_TIMER_1++;            
+       
         }
 
 
@@ -699,9 +698,10 @@ namespace stnd_72_v2
                 MSG1.MSG.CMD.Cmd_id   = Convert.ToUInt64((RCV[offset + 8] << 56) + (RCV[offset + 9] << 48) + (RCV[offset + 10] << 40) + (RCV[offset + 11] << 32) + (RCV[offset + 12] << 24) + (RCV[offset + 13] << 16) + (RCV[offset + 14] << 8) + (RCV[offset + 15] << 0));
                 MSG1.MSG.CMD.Cmd_time = Convert.ToUInt64((RCV[offset +16] << 56) + (RCV[offset +17] << 48) + (RCV[offset + 18] << 40) + (RCV[offset + 19] << 32) + (RCV[offset + 20] << 24) + (RCV[offset + 21] << 16) + (RCV[offset + 22] << 8) + (RCV[offset + 23] << 0));
 
-                if (MSG1.MSG.CMD.Cmd_type== MSG_CMD_OK)
+                if (MSG1.MSG.CMD.Cmd_type== MSG_CMD_OK)//если есть квитанция MSG_CMD_OK - "команда выполненна успешно"
                 {
-                    FLAG_TIMER_1 = 0;
+                    FLAG_TIMER_1 = 0;//сбрасываем счётчик таймера ожидания обратной связи с блоком по сети эзернет
+                    FLAG_STATUS  = false;
                 }
 
                 //Debug.WriteLine("Cmd_size:" + MSG1.MSG.CMD.Cmd_size);
@@ -721,8 +721,7 @@ namespace stnd_72_v2
                 }
 
                 switch (MSG1.MSG.CMD.Cmd_type)
-                {
-                  
+                {                  
 
                     case MSG_TEMP_CH1: CH1.T = BitConverter.ToInt32(a, 0); break;
                     case MSG_TEMP_CH2: CH2.T = BitConverter.ToInt32(a, 0); break;
@@ -1060,6 +1059,171 @@ namespace stnd_72_v2
         private void Grid_Initialized(object sender, EventArgs e)
         {
 
+        }
+
+        bool TEST;
+        private void button_START_click(object sender, RoutedEventArgs e)
+        {
+            byte[] ARRAY_data = new byte[4];
+            byte CMD = 0;//код команды
+            byte LENGTH_DATA = 0;//количество данных
+            byte TIME_CMD = 0;//время начала исполнения 0 - кактолько так сразу!
+            ERROR_SCH = 0;   //счётчик ошибок
+            label_INFO.Content = "";
+            string curTimeLong = DateTime.Now.ToLongTimeString();
+            if (button_START.Content=="START")
+            {
+                TEST = true;
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1700); //это надо чтобы успел позеленеть индикатор температуры, а то сбрасываются все светодиоды при тесте!
+                newForm.Clear_data();
+                button_START.Content = "STOP";
+                console_text = "";
+                Timer2.Start();//запускаю таймер проверяющий приём по UDP
+                Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
+                STATE_PROCESS = 1;
+                FLAG_STATUS = true;
+                FLAG_TRX = true;
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду: ВКЛ +12Вольт !\r";
+                CMD = 3;//команда 3 - CMD_12V
+                LENGTH_DATA = 4;//число данных в байтах
+                ARRAY_data[3] = 1;//данные
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+               
+            } else
+            {
+                TEST = false;
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
+                STATE_PROCESS = N_STATE_MAX;//так как не надо запускать стейт машину, а надо только проверить что пришло подтверждение на команду
+                button_START.Content = "START";
+                FLAG_STATUS = true;
+                FLAG_TRX = true;
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду: ВЫКЛ +12Вольт !\r";
+                CMD = 3;//команда 3 - CMD_12V
+                LENGTH_DATA = 4;//число данных в байтах
+                ARRAY_data[3] = 0;//данные
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            }
+
+        }
+
+        byte [] tca_convert() //переводим значения переменныйх в вид удобный для программирования микросхемы i2c - TCA
+        {
+            byte[] a = new byte[4];
+            int z;
+            z = ISPRAV_AC + ((PROGR & 0x3) << 4) + ((OFCH    & 0x3) << 21) + ((SINHR     & 0x3) << 18) +
+                                                   ((LS      & 0x3) << 16) + ((ISPR_J330 & 0x3) << 14) +
+                                                   ((OTKL_AC & 0x1) << 12) + ((TEMP      & 0x3) << 8);
+
+            a[0] = Convert.ToByte((z >> 24) & 0xff);
+            a[1] = Convert.ToByte((z >> 16) & 0xff);
+            a[2] = Convert.ToByte((z >> 8)  & 0xff);
+            a[3] = Convert.ToByte((z >> 0)  & 0xff);
+
+            return a;
+        }
+
+        int FLAG_TIMER_3  = 0;
+        int STATE_PROCESS = 0;
+        bool FLAG_STATUS;
+        bool FLAG_TRX;
+        int ERROR_SCH = 0;
+
+        void STATE_MASHINE (int STATE)
+        {
+            int z = 0;
+            byte[] ARRAY_data = new byte[4];
+            byte CMD         = 0;//код команды
+            byte LENGTH_DATA = 0;//количество данных
+            byte TIME_CMD    = 0;//время начала исполнения 0 - кактолько так сразу!
+            string curTimeLong = DateTime.Now.ToLongTimeString();
+
+            FLAG_STATUS = true;//поднимаем флаг запроса! Квитанция должны его скинуть
+            FLAG_TRX    = true;
+
+            if (STATE == 1)//зажечь все светодиоды на панели
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:включить красные светодиоды !\r";                
+
+                ISPRAV_AC   = 2;
+                PROGR       = 2;
+                OFCH        = 2;
+                LS          = 2;
+                OTKL_AC     = 2;
+                SINHR       = 2;
+                ISPR_J330   = 2;
+                TEMP        = 2;
+                Timer3.Interval = new TimeSpan(0,0,0,0,2000);
+                ARRAY_data = tca_convert();
+                CMD = 200;        //команда 200 - CMD_LED
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            } else
+                if (STATE == 2)//зажечь все светодиоды на панели
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:включить зелёные светодиоды.\r";
+
+                ISPRAV_AC   = 1;
+                PROGR       = 1;
+                OFCH        = 1;
+                LS          = 1;
+                OTKL_AC     = 1;
+                SINHR       = 1;
+                ISPR_J330   = 1;
+                TEMP        = 1;
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1000);
+                ARRAY_data = tca_convert();
+                CMD = 200;        //команда 200 - CMD_LED
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            }
+            else
+                if (STATE == 3)//Проверить напряжение в каналах
+            {
+                console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:проверить напряжение в каналах.\r";
+                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                CMD = 100;        //команда 100 - CMD_STATUS
+                LENGTH_DATA = 4;  //число данных в байтах
+                TIME_CMD = 0;
+                UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+            }
+
+        }
+
+        private void Timer3_Tick(object sender, EventArgs e)
+        {//-------------Тут по таймеру шлём запрос состояния блока по UDP---------------------
+            string curTimeLong = DateTime.Now.ToLongTimeString();
+           
+            if (FLAG_STATUS==true)
+            {               
+                console_text = console_text +$"[{curTimeLong}] "+"ОШИБКА ОБМЕНА!\r";
+                ERROR_SCH++;
+                FLAG_STATUS = false;
+                FLAG_TRX    = false;
+            } else
+            {
+                if (FLAG_TRX == true)
+                {
+                    console_text = console_text + $"[{curTimeLong}] " + "OK.\r";
+                    FLAG_TRX = false;
+                }
+            }
+            STATE_MASHINE(STATE_PROCESS);
+            if (STATE_PROCESS!= N_STATE_MAX) STATE_PROCESS++; //делаем на одно состояние стейт машины больше чтобы получить все ответы!!
+            else
+            {
+                //MessageBox.Show("Блок отлично работает!");
+                if (TEST==true)
+                {
+                    if (ERROR_SCH == 0) label_INFO.Content = "ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО";
+                    else label_INFO.Content = "     ТЕСТЫ НЕ ПРОЙДЕНЫ!";
+                }                
+                Timer3.Stop();
+            }
         }
     }
 }
