@@ -196,12 +196,11 @@ namespace stnd_72_v2
           //    Debug.WriteLine("*");
                 if (FLAG_UDP_RCV == 0)
                 {
-                    //  receivedMsg = Encoding.ASCII.GetString(data, 0, data.Length);
+             //     receivedMsg = Encoding.ASCII.GetString(data, 0, data.Length);
                     Array.Copy(data, RCV, data.Length);//копируем массив отсчётов в форму обработки    
                     RCV_size = data.Length;
-             //       FLAG_UDP_RCV = 1;
+             //     FLAG_UDP_RCV = 1;
                     UDP_BUF_DESCRIPT();
-
                 }
                 sch_packet++;
             }
@@ -214,16 +213,14 @@ namespace stnd_72_v2
         {
             byte[] a = new byte[4];
             InitializeComponent();
-            button_START.Content = "START";//пишем это тут чтобы потом условие проверки текста сразу срабатывало! а то ему что-то в тексте не нравится.
+          
             Timer2.Tick += new EventHandler(Timer2_Tick);
             Timer2.Interval = new TimeSpan(0, 0, 0, 0, 250);
-            //     Timer2.Start();//запускаю таймер проверяющий приём по UDP
-
+       
             Timer3.Tick += new EventHandler(Timer3_Tick);
             Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
-            newForm = new form_consol1("console1");
-            Start();//запускаю сервер UDP
-            UDP_SEND(100,a, 4, 0);
+            newForm = new form_consol1("console1");         
+            
         }
 
         private void button_comport_send_Click(object sender, RoutedEventArgs e)
@@ -1073,10 +1070,17 @@ namespace stnd_72_v2
             ERROR_SCH = 0;   //счётчик ошибок
             label_INFO.Content = "";
             string curTimeLong = DateTime.Now.ToLongTimeString();
+
+            if (_isServerStarted==false)
+            {
+                Start();//запускаю сервер UDP
+                UDP_SEND(100, ARRAY_data, 4, 0);
+            }
+
             if (Convert.ToString(button_START.Content)=="START")
             {
-                label_state.Visibility = Visibility.Visible;
-                label_state.Content = "";
+     //           label_state.Visibility = Visibility.Visible;
+     //           label_state.Content = "";
                 TEST = true;
                 Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1700); //это надо чтобы успел позеленеть индикатор температуры, а то сбрасываются все светодиоды при тесте!
                 newForm.Clear_data();
@@ -1096,7 +1100,7 @@ namespace stnd_72_v2
                
             } else
             {
-                label_state.Visibility = Visibility.Hidden;
+    //            label_state.Visibility = Visibility.Hidden;
                 TEST = false;
                 Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
                 Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
@@ -1148,7 +1152,7 @@ namespace stnd_72_v2
 
             FLAG_STATUS = true;//поднимаем флаг запроса! Квитанция должны его скинуть
             FLAG_TRX    = true;
-            label_state.Content = STATE_PROCESS.ToString();
+         //   label_state.Content = STATE_PROCESS.ToString();
             if (STATE == 1)//зажечь все светодиоды на панели
             {
                 console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:включить красные светодиоды !\r";                
