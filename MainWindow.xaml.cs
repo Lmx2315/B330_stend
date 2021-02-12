@@ -216,7 +216,6 @@ namespace stnd_72_v2
           
             Timer2.Tick += new EventHandler(Timer2_Tick);
             Timer2.Interval = new TimeSpan(0, 0, 0, 0, 250);
-       
             Timer3.Tick += new EventHandler(Timer3_Tick);
             Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
             newForm = new form_consol1("console1");         
@@ -1210,7 +1209,7 @@ namespace stnd_72_v2
                 UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
             } else
             if (STATE == 5)//Проверить управление каналами питания - выключить каналы питания
-            {
+            {/*
                 console_text = console_text + $"[{curTimeLong}] " + "Отправлем команду:выключить каналы питания.\r";
                 Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1500);
                 ARRAY_data[3] = 0xff;
@@ -1218,6 +1217,7 @@ namespace stnd_72_v2
                 LENGTH_DATA = 4;  //число данных в байтах
                 TIME_CMD = 0;
                 UDP_SEND(CMD, ARRAY_data, LENGTH_DATA, TIME_CMD);
+                */
             }
             else
             if (STATE == 6)//Проверить управление каналами питания - включить каналы питания
