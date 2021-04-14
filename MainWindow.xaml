@@ -5,26 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:stnd_72_v2"
         mc:Ignorable="d"
-        Title="B330" Height="230.163" Width="228.304">
+        Title="B330" Height="250" Width="280">
     <Grid Margin="0,0,-8,0" Initialized="Grid_Initialized">
-        <TextBox x:Name="textBox_comport" HorizontalAlignment="Left" Height="23" Margin="236,13,0,0" TextWrapping="Wrap" Text="COM9" VerticalAlignment="Top" Width="62"/>
-        <TextBox x:Name="textBox_comport_message" HorizontalAlignment="Left" Height="23" Margin="236,50,0,0" TextWrapping="Wrap" Text="~0 help;" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="button_comport_send" Content="send" HorizontalAlignment="Left" Margin="236,79,0,0" VerticalAlignment="Top" Width="62" Click="button_comport_send_Click"/>
+        <TextBox x:Name="textBox_comport" HorizontalAlignment="Left" Height="23" Margin="294,10,-76,0" TextWrapping="Wrap" Text="COM9" VerticalAlignment="Top" Width="62"/>
+        <TextBox x:Name="textBox_comport_message" HorizontalAlignment="Left" Height="23" Margin="294,47,-134,0" TextWrapping="Wrap" Text="~0 help;" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="button_comport_send" Content="send" HorizontalAlignment="Left" Margin="294,76,-76,0" VerticalAlignment="Top" Width="62" Click="button_comport_send_Click"/>
         <Button x:Name="button_comport_open" Content="open" HorizontalAlignment="Left" Margin="311,14,0,0" VerticalAlignment="Top" Width="45" Click="button_comport_open_Click"/>
 
-        <TextBox x:Name="textBox_dest_ip" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1.3.1.61" VerticalAlignment="Top" Width="73" Margin="368,10,0,0"/>
-        <TextBox x:Name="textBox_dest_port" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="3001" VerticalAlignment="Top" Width="73" Margin="368,38,0,0"/>
-        <TextBox x:Name="textBox_my_ip" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1.3.1.1" VerticalAlignment="Top" Width="73" Margin="368,66,0,0"/>
-        <TextBox x:Name="textBox_my_port" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="73" Margin="368,94,0,0"/>
+        <TextBox x:Name="textBox_dest_ip" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1.3.2.63" VerticalAlignment="Top" Width="73" Margin="146,11,0,0"/>
+        <TextBox x:Name="textBox_dest_port" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="3001" VerticalAlignment="Top" Width="73" Margin="146,39,0,0"/>
+        <TextBox x:Name="textBox_my_ip" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1.3.2.10" VerticalAlignment="Top" Width="73" Margin="146,67,0,0"/>
+        <TextBox x:Name="textBox_my_port" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="73" Margin="146,95,0,0"/>
         <Button x:Name="button_open_file" Content="open file" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="button_Click" Margin="366,158,0,0"/>
-        <Button x:Name="button_udp_init_072" Content="init_072" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="button_udp_init_072_Click" Margin="366,125,0,0"/>
+        <Button x:Name="button_udp_init_072" Content="init_072" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Click="button_udp_init_072_Click" Margin="366,125,0,0" Visibility="Hidden"/>
 
-        <Button x:Name="button_panel_330" Content="светодиоды" HorizontalAlignment="Left" Margin="21,51,0,0" VerticalAlignment="Top" Width="75" Click="button_adc0_Click" FontWeight="Bold"/>
-        <Button x:Name="button_console" Content="консоль" HorizontalAlignment="Left" Margin="21,14,0,0" VerticalAlignment="Top" Width="75" Click="button_Click_1" FontWeight="Bold"/>
-        <Button x:Name="button_info" Content="состояние" HorizontalAlignment="Left" Margin="21,88,0,0" VerticalAlignment="Top" Width="75" Click="button_info_Click" FontWeight="Bold"/>
+        <Button x:Name="button_panel_330" Content="светодиоды" HorizontalAlignment="Left" Margin="21,55,0,0" VerticalAlignment="Top" Width="109" Click="button_adc0_Click" FontWeight="Bold" Height="35" FontSize="16"/>
+        <Button x:Name="button_console" Content="консоль" HorizontalAlignment="Left" Margin="21,14,0,0" VerticalAlignment="Top" Width="109" Click="button_Click_1" FontWeight="Bold" Height="35" FontSize="16"/>
+        <Button x:Name="button_info" Content="состояние" HorizontalAlignment="Left" Margin="21,98,0,0" VerticalAlignment="Top" Width="109" Click="button_info_Click" FontWeight="Bold" Height="35" FontSize="16"/>
         <Button x:Name="button_12V_vkl" Content="выкл +12V" HorizontalAlignment="Left" Margin="21,125,0,0" VerticalAlignment="Top" Width="75" Click="button_12V_vkl_Click" Visibility="Hidden"/>
-        <Button x:Name="button_START" Content="START" HorizontalAlignment="Left" Margin="128,88,0,0" VerticalAlignment="Top" Width="63" Click="button_START_click" Height="57" FontWeight="Bold"/>
-        <Label x:Name="label_INFO" Content="" HorizontalAlignment="Left" Margin="10,154,0,0" VerticalAlignment="Top" Width="198" FontWeight="Bold"/>
+        <Button x:Name="button_START" Content="START" HorizontalAlignment="Left" Margin="21,147,0,0" VerticalAlignment="Top" Width="75" Click="button_START_click" Height="57" FontWeight="Bold"/>
+        <Label x:Name="label_INFO" Content="" HorizontalAlignment="Left" Margin="101,138,0,0" VerticalAlignment="Top" Width="163" FontWeight="Bold" Height="46"/>
+        <Button x:Name="button" Content="send" HorizontalAlignment="Left" Margin="294,138,-76,0" VerticalAlignment="Top" Width="62" Click="button_Click_2"/>
+        <TextBox x:Name="textBox_SEND_IP" HorizontalAlignment="Left" Height="23" Margin="294,106,-81,0" TextWrapping="Wrap" Text="1.3.2.60" VerticalAlignment="Top" Width="67"/>
+        <TextBox x:Name="textBox_SEND_IP_adr" HorizontalAlignment="Left" Height="23" Margin="370,106,-119,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="29"/>
 
     </Grid>
 </Window>

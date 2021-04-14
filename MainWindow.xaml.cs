@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Serialization;
 using System.IO.Ports;
 using System.IO;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ using System.Threading;
 using Microsoft.Win32;
 using System.Net;
 using System.Net.Sockets;
+using System.Xml.Linq;
 
 namespace stnd_72_v2
 {
@@ -65,56 +67,10 @@ namespace stnd_72_v2
         public CHANNEL CH5;
         public CHANNEL CH6;
         public CHANNEL CH7;
-        public CHANNEL CH8;
-
-        int MSG_CMD_OK = 3;//квитанция о том что команда выполненна
-        int MSG_ID_CH1 = 101;
-        int MSG_ID_CH2 = 102;
-        int MSG_ID_CH3 = 103;
-        int MSG_ID_CH4 = 104;
-        int MSG_ID_CH5 = 105;
-        int MSG_ID_CH6 = 106;
-        int MSG_ID_CH7 = 107;
-        int MSG_ID_CH8 = 108;
-
-        const uint MSG_TEMP_CH1 = 111;
-        const uint MSG_TEMP_CH2 = 112;
-        const uint MSG_TEMP_CH3 = 113;
-        const uint MSG_TEMP_CH4 = 114;
-        const uint MSG_TEMP_CH5 = 115;
-        const uint MSG_TEMP_CH6 = 116;
-        const uint MSG_TEMP_CH7 = 117;
-        const uint MSG_TEMP_CH8 = 118;
-
-        const uint MSG_I_CH1 = 131;
-        const uint MSG_I_CH2 = 132;
-        const uint MSG_I_CH3 = 133;
-        const uint MSG_I_CH4 = 134;
-        const uint MSG_I_CH5 = 135;
-        const uint MSG_I_CH6 = 136;
-        const uint MSG_I_CH7 = 137;
-        const uint MSG_I_CH8 = 138;
-
-        const uint MSG_P_CH1 = 141;
-        const uint MSG_P_CH2 = 142;
-        const uint MSG_P_CH3 = 143;
-        const uint MSG_P_CH4 = 144;
-        const uint MSG_P_CH5 = 145;
-        const uint MSG_P_CH6 = 146;
-        const uint MSG_P_CH7 = 147;
-        const uint MSG_P_CH8 = 148;
-
-        const uint MSG_U_CH1 = 121;
-        const uint MSG_U_CH2 = 122;
-        const uint MSG_U_CH3 = 123;
-        const uint MSG_U_CH4 = 124;
-        const uint MSG_U_CH5 = 125;
-        const uint MSG_U_CH6 = 126;
-        const uint MSG_U_CH7 = 127;
-        const uint MSG_U_CH8 = 128;
+        public CHANNEL CH8;  
 
         const uint MSG_PWR_CHANNEL = 150;
-       public uint FLAG_NEW_DATA = 0; //флаг что пришли новые данные о состоянии блока
+        public uint FLAG_NEW_DATA = 0; //флаг что пришли новые данные о состоянии блока
 
         int N_STATE_MAX = 6+1;//максимальное число состояний стейт машины тестирования
         int FLAG_SYS_INIT;
@@ -127,13 +83,18 @@ namespace stnd_72_v2
         Byte[] RCV = new byte[64000];
         int sch_packet = 0;
 
+        public Config cfg = new Config();//тут храним конфигурацию , будем брать её из файла
+
         form_consol1 newForm;
+
+        UdpClient client = new UdpClient();  
 
         //----------ETH------------
         UdpClient _server = null;
         IPEndPoint _client = null;
         Thread _listenThread = null;
         private bool _isServerStarted = false;
+        int SCH_UDP = 0;
         //-------------------eth-------------------------
         private void Start()
         {
@@ -218,8 +179,11 @@ namespace stnd_72_v2
             Timer2.Interval = new TimeSpan(0, 0, 0, 0, 250);
             Timer3.Tick += new EventHandler(Timer3_Tick);
             Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
-            newForm = new form_consol1("console1");         
-            
+            newForm = new form_consol1("console1");
+
+            CFG_load();
+
+
         }
 
         private void button_comport_send_Click(object sender, RoutedEventArgs e)
@@ -562,6 +526,8 @@ namespace stnd_72_v2
             {
                 Panel_330 newForm = new Panel_330("Панель 330",this);
                 Panel_330_form[0] = true;
+                newForm.Top = this.Top;
+                newForm.Left = this.Left + 281;
                 newForm.Show();
                 newForm.Owner = this;
             }            
@@ -576,7 +542,7 @@ namespace stnd_72_v2
             {
            //   newForm = new form_consol1("console1");
                 newForm.Top = this.Top;
-                newForm.Left = this.Left;
+                newForm.Left = this.Left+281;
                 newForm.Owner = this;            
                 Console_form[0] = true;
                 newForm.Show(); 
@@ -590,6 +556,8 @@ namespace stnd_72_v2
             {
                 Panel_INFO newForm = new Panel_INFO("Info", this);
                 Panel_info_form[0] = true;
+                newForm.Top = this.Top;
+                newForm.Left = this.Left + 281;
                 newForm.Show();
                 newForm.Owner = this;
             }
@@ -696,12 +664,12 @@ namespace stnd_72_v2
                 MSG1.MSG.CMD.Cmd_id   = Convert.ToUInt64((RCV[offset + 8] << 56) + (RCV[offset + 9] << 48) + (RCV[offset + 10] << 40) + (RCV[offset + 11] << 32) + (RCV[offset + 12] << 24) + (RCV[offset + 13] << 16) + (RCV[offset + 14] << 8) + (RCV[offset + 15] << 0));
                 MSG1.MSG.CMD.Cmd_time = Convert.ToUInt64((RCV[offset +16] << 56) + (RCV[offset +17] << 48) + (RCV[offset + 18] << 40) + (RCV[offset + 19] << 32) + (RCV[offset + 20] << 24) + (RCV[offset + 21] << 16) + (RCV[offset + 22] << 8) + (RCV[offset + 23] << 0));
 
-                if (MSG1.MSG.CMD.Cmd_type== MSG_CMD_OK)//если есть квитанция MSG_CMD_OK - "команда выполненна успешно"
+                if (MSG1.MSG.CMD.Cmd_type== cfg.MSG_CMD_OK)//если есть квитанция MSG_CMD_OK - "команда выполненна успешно"
                 {
-                    FLAG_TIMER_1 = 0;//сбрасываем счётчик таймера ожидания обратной связи с блоком по сети эзернет
+                //  FLAG_TIMER_1 = 0;//сбрасываем счётчик таймера ожидания обратной связи с блоком по сети эзернет
                     FLAG_STATUS  = false;
                 }
-
+                FLAG_TIMER_1 = 0;//сбрасываем счётчик таймера ожидания обратной связи с блоком по сети эзернет
                 //Debug.WriteLine("Cmd_size:" + MSG1.MSG.CMD.Cmd_size);
                 //Debug.WriteLine("Cmd_type:" + MSG1.MSG.CMD.Cmd_type);
                 //Debug.WriteLine("Cmd_id  :" + MSG1.MSG.CMD.Cmd_id);
@@ -717,69 +685,55 @@ namespace stnd_72_v2
                         a[3-j] = RCV[offset + 24 + j];
                     //if (MSG1.MSG.CMD.Cmd_type == MSG_TEMP_CH1)  Debug.WriteLine("A[j]:" + MSG1.MSG.CMD.A[j]);
                 }
+            
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH1) CH1.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH2) CH2.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH3) CH3.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH4) CH4.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH5) CH5.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH6) CH6.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH7) CH7.T = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH8) CH8.T = BitConverter.ToInt32(a, 0);
 
-                switch (MSG1.MSG.CMD.Cmd_type)
-                {                  
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH1) CH1.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH2) CH2.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH3) CH3.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH4) CH4.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH5) CH5.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH6) CH6.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH7) CH7.I = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_I_CH8) CH8.I = BitConverter.ToInt32(a, 0);
 
-                    case MSG_TEMP_CH1: CH1.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH2: CH2.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH3: CH3.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH4: CH4.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH5: CH5.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH6: CH6.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH7: CH7.T = BitConverter.ToInt32(a, 0); break;
-                    case MSG_TEMP_CH8: CH8.T = BitConverter.ToInt32(a, 0); break;
-              
-                    case MSG_I_CH1: CH1.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH2: CH2.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH3: CH3.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH4: CH4.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH5: CH5.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH6: CH6.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH7: CH7.I = BitConverter.ToInt32(a, 0); break;
-                    case MSG_I_CH8: CH8.I = BitConverter.ToInt32(a, 0); break;
-              
-                    case MSG_P_CH1: CH1.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH2: CH2.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH3: CH3.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH4: CH4.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH5: CH5.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH6: CH6.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH7: CH7.P = BitConverter.ToInt32(a, 0); break;
-                    case MSG_P_CH8: CH8.P = BitConverter.ToInt32(a, 0); break;
-              
-                    case MSG_U_CH1: CH1.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH2: CH2.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH3: CH3.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH4: CH4.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH5: CH5.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH6: CH6.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH7: CH7.U = BitConverter.ToInt32(a, 0); break;
-                    case MSG_U_CH8: CH8.U = BitConverter.ToInt32(a, 0); break;
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH1) CH1.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH2) CH2.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH3) CH3.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH4) CH4.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH5) CH5.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH6) CH6.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH7) CH7.P = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_P_CH8) CH8.P = BitConverter.ToInt32(a, 0);
 
-                    case MSG_PWR_CHANNEL: 
-                        CH8.PWR = ((BitConverter.ToInt32(a, 0)) >> 0) & 1;
-                        CH7.PWR = ((BitConverter.ToInt32(a, 0)) >> 1) & 1;
-                        CH6.PWR = ((BitConverter.ToInt32(a, 0)) >> 2) & 1;
-                        CH5.PWR = ((BitConverter.ToInt32(a, 0)) >> 3) & 1;
-                        CH4.PWR = ((BitConverter.ToInt32(a, 0)) >> 4) & 1;
-                        CH3.PWR = ((BitConverter.ToInt32(a, 0)) >> 5) & 1;
-                        CH2.PWR = ((BitConverter.ToInt32(a, 0)) >> 6) & 1;
-                        CH1.PWR = ((BitConverter.ToInt32(a, 0)) >> 7) & 1;
-                        VKL_12V = ((BitConverter.ToInt32(a, 0)) >> 8) & 1;
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH1) CH1.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH2) CH2.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH3) CH3.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH4) CH4.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH5) CH5.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH6) CH6.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH7) CH7.U = BitConverter.ToInt32(a, 0);
+                if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_U_CH8) CH8.U = BitConverter.ToInt32(a, 0);
 
-          //              Debug.WriteLine("PWR    :" + BitConverter.ToInt32(a, 0));
-          //              Debug.WriteLine("CH8.PWR:" + CH8.PWR);
-          //              Debug.WriteLine("CH7.PWR:" + CH7.PWR);
-           //             Debug.WriteLine("CH6.PWR:" + CH6.PWR);
-          //              Debug.WriteLine("CH5.PWR:" + CH5.PWR);
-          //              Debug.WriteLine("CH4.PWR:" + CH4.PWR);
-          //              Debug.WriteLine("CH3.PWR:" + CH3.PWR);
-          //              Debug.WriteLine("CH2.PWR:" + CH2.PWR);
-          //              Debug.WriteLine("CH1.PWR:" + CH1.PWR);
-                        break;                       
+                if ((int)MSG1.MSG.CMD.Cmd_type == MSG_PWR_CHANNEL)
+                {
+                    CH8.PWR = ((BitConverter.ToInt32(a, 0)) >> 0) & 1;
+                    CH7.PWR = ((BitConverter.ToInt32(a, 0)) >> 1) & 1;
+                    CH6.PWR = ((BitConverter.ToInt32(a, 0)) >> 2) & 1;
+                    CH5.PWR = ((BitConverter.ToInt32(a, 0)) >> 3) & 1;
+                    CH4.PWR = ((BitConverter.ToInt32(a, 0)) >> 4) & 1;
+                    CH3.PWR = ((BitConverter.ToInt32(a, 0)) >> 5) & 1;
+                    CH2.PWR = ((BitConverter.ToInt32(a, 0)) >> 6) & 1;
+                    CH1.PWR = ((BitConverter.ToInt32(a, 0)) >> 7) & 1;
+                    VKL_12V = ((BitConverter.ToInt32(a, 0)) >> 8) & 1;
                 }
-          
                 // TEMP_channel(MSG1.MSG.CMD.A);
 
                 offset = offset + 24 + j;
@@ -792,7 +746,7 @@ namespace stnd_72_v2
             int j = 0;
             byte[] a = new byte[4];
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH1)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH1)
             {
                 CH1.ID = "";
 
@@ -804,7 +758,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH2)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH2)
             {
                 CH2.ID = "";
 
@@ -816,7 +770,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH3)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH3)
             {
                 CH3.ID = "";
 
@@ -828,7 +782,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH4)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH4)
             {
                 CH4.ID = "";
 
@@ -840,7 +794,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH5)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH5)
             {
                 CH5.ID = "";
 
@@ -852,7 +806,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH6)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH6)
             {
                 CH6.ID = "";
 
@@ -864,7 +818,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH7)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH7)
             {
                 CH7.ID = "";
 
@@ -876,7 +830,7 @@ namespace stnd_72_v2
                 //Debug.WriteLine("CH1.ID:" + CH1.ID);
             }
 
-            if (MSG1.MSG.CMD.Cmd_type == MSG_ID_CH8)
+            if (MSG1.MSG.CMD.Cmd_type == cfg.MSG_ID_CH8)
             {
                 CH8.ID = "";
 
@@ -896,8 +850,7 @@ namespace stnd_72_v2
             int i = 0;
 
             UInt64 sch_cmd = 0;
-            try
-            {
+        
                 FRAME.Frame_size         = 0;
                 FRAME.Frame_number       = 0;
                 FRAME.Stop_bit           = 1;
@@ -1007,35 +960,36 @@ namespace stnd_72_v2
 
 
                 //-----шлём данные по UDP--------------
-                string ip_dest = textBox_dest_ip.Text;
-                int port_dest = Convert.ToInt32(textBox_dest_port.Text);
-
+              string ip_dest = textBox_dest_ip.Text;
+              int port_dest = Convert.ToInt32(textBox_dest_port.Text);
+            try
+            {
                 UdpClient client = new UdpClient();
                 client.Connect(ip_dest, port_dest);
                 int number_bytes = client.Send(UDP_packet, DATA_lenght);
-                //           Debug.WriteLine("DATA_lenght                  :" + DATA_lenght);
-                //           Debug.WriteLine("FRAME.MSG.CMD.Cmd_data.Length:" + FRAME.MSG.CMD.Cmd_data.Length);
-                //           Debug.WriteLine("FRAME.MSG.CMD.Cmd_data       :" + FRAME.MSG.CMD.Cmd_data);
+                Debug.WriteLine("DATA_lenght:" + DATA_lenght);
+                Debug.WriteLine("UDP_SEND:" + SCH_UDP);
+                SCH_UDP++;
                 client.Close();
        
             }
-            catch
+            catch (Exception ex)
             {
-
+                Console.WriteLine("UDP чё-то не так:"+ex);
             }
         }
 
         private void Timer2_Tick(object sender, EventArgs e)
         {//-------------Тут по таймеру шлём запрос состояния блока по UDP---------------------
 
-            if (FLAG_TIMER_1 > 2)
+            if (FLAG_TIMER_1 > 3)
             {
-                button_udp_init_072.Background = new SolidColorBrush(Colors.Red);
+                button_info.Background = new SolidColorBrush(Colors.Red);
                 FLAG_SYS_INIT = 0;//нет связи с блоком 
             }
             else
             {
-                if (button_udp_init_072.Background!= Brushes.Green) button_udp_init_072.Background = Brushes.Green;
+                if (button_info.Background!= Brushes.Green) button_info.Background = Brushes.Green;
                 if (VKL_12V==1) button_12V_vkl.Content="вкл +12V";
                 else            button_12V_vkl.Content="выкл +12V";
                 FLAG_SYS_INIT = 1;//есть связь с блоком , можно запрашивать состояние
@@ -1044,6 +998,7 @@ namespace stnd_72_v2
 
             byte[] a = new byte[1];
          
+            /*
             a[0] = Convert.ToByte(100);    
             UDP_SEND(
                 100,//команда 100 - CMD_STATUS
@@ -1051,7 +1006,7 @@ namespace stnd_72_v2
                 1,  //число данных в байтах
                 0   //время исполнения 0 - значит сразу как сможешь
                 );
-              
+              */
         }
 
         private void Grid_Initialized(object sender, EventArgs e)
@@ -1074,19 +1029,19 @@ namespace stnd_72_v2
             {
                 Start();//запускаю сервер UDP
                 UDP_SEND(100, ARRAY_data, 4, 0);
+                Timer2.Start();//запускаю таймер проверяющий приём по UDP
             }
 
             if (Convert.ToString(button_START.Content)=="START")
             {
      //           label_state.Visibility = Visibility.Visible;
      //           label_state.Content = "";
-                TEST = true;
-                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1700); //это надо чтобы успел позеленеть индикатор температуры, а то сбрасываются все светодиоды при тесте!
+    //            TEST = true;
+    //          Timer3.Interval = new TimeSpan(0, 0, 0, 0, 1000); //это надо чтобы успел позеленеть индикатор температуры, а то сбрасываются все светодиоды при тесте!
                 newForm.Clear_data();
                 button_START.Content = "STOP";
-                console_text = "";
-                Timer2.Start();//запускаю таймер проверяющий приём по UDP
-                Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
+                console_text = "";   
+   //           Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
                 STATE_PROCESS = 1;
                 FLAG_STATUS = true;
                 FLAG_TRX = true;
@@ -1101,8 +1056,8 @@ namespace stnd_72_v2
             {
     //            label_state.Visibility = Visibility.Hidden;
                 TEST = false;
-                Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
-                Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
+ //             Timer3.Interval = new TimeSpan(0, 0, 0, 0, 500);
+ //             Timer3.Start();//запускаем таймер для отправки последовательности команд в блок
                 STATE_PROCESS = N_STATE_MAX;//так как не надо запускать стейт машину, а надо только проверить что пришло подтверждение на команду
                 button_START.Content = "START";
                 FLAG_STATUS = true;
@@ -1240,7 +1195,7 @@ namespace stnd_72_v2
            
             if (FLAG_STATUS==true)
             {               
-                console_text = console_text +$"[{curTimeLong}] "+"ОШИБКА ОБМЕНА!\r";
+               //console_text = console_text +$"[{curTimeLong}] "+"ОШИБКА ОБМЕНА!\r";
                 ERROR_SCH++;
                 FLAG_STATUS = false;
                 FLAG_TRX    = false;
@@ -1260,11 +1215,61 @@ namespace stnd_72_v2
                 if (TEST==true)
                 {
                     
-                    if (ERROR_SCH == 0) label_INFO.Content = "ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО";
-                    else                label_INFO.Content = "     ТЕСТЫ НЕ ПРОЙДЕНЫ!";
+                   // if (ERROR_SCH == 0) label_INFO.Content = "ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО";
+                   // else                label_INFO.Content = "     ТЕСТЫ НЕ ПРОЙДЕНЫ!";
                 }                
                 Timer3.Stop();
             }
+        }
+
+        private void button_Click_2(object sender, RoutedEventArgs e)
+        {
+            byte[] a = new byte[5];
+
+            a[0] = (byte)int.Parse(textBox_SEND_IP_adr.Text);//адрес кассеты 072 на бекплейне    
+            Console.WriteLine("a[0]:"+ a[0]);
+            IPAddress ip = IPAddress.Parse(textBox_SEND_IP.Text);
+            long z = ip.Address;
+            Console.WriteLine($"z:{z:X}");
+            a[4] = (byte)(z >> 24); //в младшем адресе находятся старшие байты числа!!!
+            a[3] = (byte)(z >> 16);
+            a[2] = (byte)(z >>  8);
+            a[1] = (byte)(z >>  0);
+
+            Console.WriteLine("a[3]:" + a[3]);
+            Console.WriteLine("a[2]:" + a[2]);
+            Console.WriteLine("a[1]:" + a[1]);
+            Console.WriteLine("a[0]:" + a[0]);
+
+            UDP_SEND(
+                cfg.CMD_SETUP_IP0,//команда 100 - CMD_STATUS
+                a,  //данные
+                5,  //число данных в байтах
+                0   //время исполнения 0 - значит сразу как сможешь
+                );
+        }
+
+        private bool CFG_load()
+        {
+            bool error = false;
+            string path = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+            path = System.IO.Path.GetDirectoryName(path);
+
+            // получаем выбранный файл
+            string filename = "cfg.dat";
+            try
+            {
+                XmlSerializer xmlSerialaizer = new XmlSerializer(typeof(Config));
+                FileStream fr = new FileStream(filename, FileMode.Open);
+                cfg = (Config)xmlSerialaizer.Deserialize(fr);
+                fr.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Исключение:"+ex);
+            }
+
+            return error;
         }
     }
 }
