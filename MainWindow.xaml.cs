@@ -677,14 +677,17 @@ namespace stnd_72_v2
                 //---------------------------------------------------------------------------------
                 ID_channel(offset);
                 //----------------------------------------------------------------------------------
- 
-                    for (j=0;j<Convert.ToInt32(MSG1.MSG.CMD.Cmd_size);j++)
+                    if (MSG1.MSG.CMD.Cmd_size<5)
+                {
+                    for (j = 0; j < Convert.ToInt32(MSG1.MSG.CMD.Cmd_size); j++)
                     {
                         MSG1.MSG.CMD.Cmd_data = Convert.ToString(RCV[offset + 24 + j]);
                         MSG1.MSG.CMD.A[j] = RCV[offset + 24 + j];
-                        a[3-j] = RCV[offset + 24 + j];
-                    //if (MSG1.MSG.CMD.Cmd_type == MSG_TEMP_CH1)  Debug.WriteLine("A[j]:" + MSG1.MSG.CMD.A[j]);
+                        a[3 - j] = RCV[offset + 24 + j];
+                        //if (MSG1.MSG.CMD.Cmd_type == MSG_TEMP_CH1)  Debug.WriteLine("A[j]:" + MSG1.MSG.CMD.A[j]);
+                    }
                 }
+
             
                 if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH1) CH1.T = BitConverter.ToInt32(a, 0);
                 if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH2) CH2.T = BitConverter.ToInt32(a, 0);
