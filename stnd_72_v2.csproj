@@ -85,7 +85,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CcfgCMD_MSG_330.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Config_B330.cs" />
     <Compile Include="Panel_330.xaml.cs">
       <DependentUpon>Panel_330.xaml</DependentUpon>
     </Compile>

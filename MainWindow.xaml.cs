@@ -180,10 +180,7 @@ namespace stnd_72_v2
             Timer3.Tick += new EventHandler(Timer3_Tick);
             Timer3.Interval = new TimeSpan(0, 0, 0, 0,2000);
             newForm = new form_consol1("console1");
-
             CFG_load();
-
-
         }
 
         private void button_comport_send_Click(object sender, RoutedEventArgs e)
@@ -549,17 +546,18 @@ namespace stnd_72_v2
             }
         }
 
+        Panel_INFO newFrm;
         public bool[] Panel_info_form = new bool[2];
         private void button_info_Click(object sender, RoutedEventArgs e)
         {
             if (Panel_info_form[0] == false)
             {
-                Panel_INFO newForm = new Panel_INFO("Info", this);
+                newFrm = new Panel_INFO("Info", this);
                 Panel_info_form[0] = true;
-                newForm.Top = this.Top;
-                newForm.Left = this.Left + 281;
-                newForm.Show();
-                newForm.Owner = this;
+                newFrm.Top = this.Top;
+                newFrm.Left = this.Left + 281;
+                newFrm.Show();
+                newFrm.Owner = this;
             }
         }
 
@@ -628,7 +626,11 @@ namespace stnd_72_v2
             int i = 0;
             int j = 0;
             int offset = 0;
-            byte[] a = new byte[4];
+            int    tmp0 = 0;
+            double [] tmp_i = new double [8];
+            double [] tmp_u = new double [8];
+            byte[] a   = new byte[4];
+            byte[] Arr = new byte[128];
 
             FLAG_NEW_DATA = 1;
 
@@ -670,14 +672,16 @@ namespace stnd_72_v2
                     FLAG_STATUS  = false;
                 }
                 FLAG_TIMER_1 = 0;//сбрасываем счётчик таймера ожидания обратной связи с блоком по сети эзернет
-                //Debug.WriteLine("Cmd_size:" + MSG1.MSG.CMD.Cmd_size);
-                //Debug.WriteLine("Cmd_type:" + MSG1.MSG.CMD.Cmd_type);
-                //Debug.WriteLine("Cmd_id  :" + MSG1.MSG.CMD.Cmd_id);
-                //Debug.WriteLine("Cmd_time:" + MSG1.MSG.CMD.Cmd_time);                
+                /*
+                Debug.WriteLine("Cmd_size:" + MSG1.MSG.CMD.Cmd_size);
+                Debug.WriteLine("Cmd_type:" + MSG1.MSG.CMD.Cmd_type);
+                Debug.WriteLine("Cmd_id  :" + MSG1.MSG.CMD.Cmd_id);
+                Debug.WriteLine("Cmd_time:" + MSG1.MSG.CMD.Cmd_time);   
+                */
                 //---------------------------------------------------------------------------------
                 ID_channel(offset);
                 //----------------------------------------------------------------------------------
-                    if (MSG1.MSG.CMD.Cmd_size<5)
+                if (MSG1.MSG.CMD.Cmd_size<5)
                 {
                     for (j = 0; j < Convert.ToInt32(MSG1.MSG.CMD.Cmd_size); j++)
                     {
@@ -686,9 +690,17 @@ namespace stnd_72_v2
                         a[3 - j] = RCV[offset + 24 + j];
                         //if (MSG1.MSG.CMD.Cmd_type == MSG_TEMP_CH1)  Debug.WriteLine("A[j]:" + MSG1.MSG.CMD.A[j]);
                     }
+                } else
+                 {
+                    for (j = 0; j < Convert.ToInt32(MSG1.MSG.CMD.Cmd_size); j++)
+                    {
+                        //MSG1.MSG.CMD.Cmd_data = Convert.ToString(RCV[offset + 24 + j]);
+                        //MSG1.MSG.CMD.A[j] = RCV[offset + 24 + j];
+                                   Arr[j] = RCV[offset + 24 + j];
+                    }
                 }
 
-            
+
                 if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH1) CH1.T = BitConverter.ToInt32(a, 0);
                 if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH2) CH2.T = BitConverter.ToInt32(a, 0);
                 if ((int)MSG1.MSG.CMD.Cmd_type == cfg.MSG_TEMP_CH3) CH3.T = BitConverter.ToInt32(a, 0);
@@ -737,8 +749,29 @@ namespace stnd_72_v2
                     CH1.PWR = ((BitConverter.ToInt32(a, 0)) >> 7) & 1;
                     VKL_12V = ((BitConverter.ToInt32(a, 0)) >> 8) & 1;
                 }
-                // TEMP_channel(MSG1.MSG.CMD.A);
 
+                int q = 0;
+                
+                if (newFrm!=null)
+                if ((int)MSG1.MSG.CMD.Cmd_type ==newFrm.cfg_CMD_MSG.MSG_Corr_REQ)
+                {
+                    for (int l=0;l<8;l++)
+                    {
+                        tmp0 = (Arr[0+q] << 24) + (Arr[1+q] << 16) + (Arr[2+q] << 8) + (Arr[3+q] << 0);
+                        tmp_i[i] = tmp0;
+                        q = q + 4;
+                        Console.WriteLine(tmp_i[i]);
+                    }
+
+                    for (int l = 0; l < 8; l++)
+                    {
+                        tmp0 = (Arr[0 + q] << 24) + (Arr[1 + q] << 16) + (Arr[2 + q] << 8) + (Arr[3 + q] << 0);
+                        tmp_u[i] = tmp0;
+                        q = q + 4;
+                        Console.WriteLine(tmp_u[i]);
+                    }
+                }
+          
                 offset = offset + 24 + j;
             }           
         }

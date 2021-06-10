@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:stnd_72_v2"
         mc:Ignorable="d"
-        Title="Panel_INFO" Height="330" Width="780"
+        Title="Panel_INFO" Height="460" Width="780"
         Closing= "DataWindow_Closing"
         >
     <Grid>
@@ -65,6 +65,12 @@
         <TextBox x:Name="txt_ID_ch6" HorizontalAlignment="Left" Height="23" Margin="485,198,0,0" TextWrapping="Wrap" Text="ID6" VerticalAlignment="Top" Width="75"/>
         <TextBox x:Name="txt_ID_ch7" HorizontalAlignment="Left" Height="23" Margin="572,198,0,0" TextWrapping="Wrap" Text="ID7" VerticalAlignment="Top" Width="75"/>
         <TextBox x:Name="txt_ID_ch8" HorizontalAlignment="Left" Height="23" Margin="664,198,0,0" TextWrapping="Wrap" Text="ID8" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1" HorizontalAlignment="Left" Margin="32,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch1_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="32,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch1_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="32,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy" HorizontalAlignment="Left" Margin="32,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch1_corr" Content="запись" HorizontalAlignment="Left" Margin="41,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch1_corr_Click"/>
+        <Button x:Name="btn_corr_req" Content="чтение" HorizontalAlignment="Left" Margin="41,401,0,0" VerticalAlignment="Top" Width="51" Click="btn_corr_req_Click"/>
 
     </Grid>
 </Window>

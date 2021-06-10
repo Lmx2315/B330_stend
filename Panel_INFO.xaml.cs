@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel; // CancelEventArgs
 using System.Diagnostics;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace stnd_72_v2
 {
@@ -22,6 +24,8 @@ namespace stnd_72_v2
     public partial class Panel_INFO : Window
     {
         string Name_this = "";
+        public Config_B330 cfg = new Config_B330();//тут храним конфигурацию , будем брать её из файла
+        public CcfgCMD_MSG_330 cfg_CMD_MSG = new CcfgCMD_MSG_330();//тут храним конфигурацию команд протокола управления блоком питания
         public Panel_INFO(string a, MainWindow main)
         {
             InitializeComponent();
@@ -33,15 +37,15 @@ namespace stnd_72_v2
     //            Debug.WriteLine("Name_this:" + Name_this);
                 if (Name_this == "Info")
                 {
-    //                Debug.WriteLine(":" + main.ISPRAV_AC);
-                    
+    //                Debug.WriteLine(":" + main.ISPRAV_AC);                    
                 }
             }
-
 
             Timer1.Tick += new EventHandler(Timer1_Tick);
             Timer1.Interval = new TimeSpan(0, 0, 0, 0, 500);
             Timer1.Start();//запускаю таймер проверяющий приём по UDP
+
+            CFG_load();
         }
 
         System.Windows.Threading.DispatcherTimer Timer1 = new System.Windows.Threading.DispatcherTimer();
@@ -106,8 +110,7 @@ namespace stnd_72_v2
                 if (main.CH7.PWR == 1) btn_ch7.Content = "выкл"; else btn_ch7.Content = "вкл";
                 if (main.CH8.PWR == 1) btn_ch8.Content = "выкл"; else btn_ch8.Content = "вкл";
          
-                    main.FLAG_NEW_DATA = 0;                       
-
+                    main.FLAG_NEW_DATA = 0;
             }
         }
 
@@ -159,7 +162,7 @@ namespace stnd_72_v2
             a[3] = Convert.ToByte((main.CH1.OFF<<7)|(main.CH2.OFF << 6)|(main.CH3.OFF << 5)|(main.CH4.OFF << 4)| (main.CH5.OFF << 3)| (main.CH6.OFF << 2)|(main.CH7.OFF << 1)| (main.CH8.OFF << 0));
             main.UDP_SEND(4, a, 4, 0);
             Debug.WriteLine("btn1:" + a[3]);
-        }
+        }       
 
         private void btn_ch2_Click(object sender, RoutedEventArgs e)
         {
@@ -349,6 +352,118 @@ namespace stnd_72_v2
             a[3] = Convert.ToByte((main.CH1.OFF << 7) | (main.CH2.OFF << 6) | (main.CH3.OFF << 5) | (main.CH4.OFF << 4) | (main.CH5.OFF << 3) | (main.CH6.OFF << 2) | (main.CH7.OFF << 1) | (main.CH8.OFF << 0));
             main.UDP_SEND(4, a, 4, 0);
             Debug.WriteLine("btn8:" + a[3]);
+        }
+
+        private void btn_ch1_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i =1;
+            int k_u =1;
+            int error = 0;
+
+            try
+            {
+                 k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch1_corr.Text) * 1000);
+                 k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch1_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }            
+
+            if (error==0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(0);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(0);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private bool CFG_load()
+        {
+            bool error = false;
+            string path = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+            path = System.IO.Path.GetDirectoryName(path);
+
+            // получаем выбранный файл
+            string filename = "cfg_CMD_MSG_330.dat";//тут храним данные команд и сообщений протокола управления блоком питания
+            try
+            {
+                XmlSerializer xmlSerialaizer = new XmlSerializer(typeof(CcfgCMD_MSG_330));
+                FileStream fr = new FileStream(filename, FileMode.Open);
+                cfg_CMD_MSG = (CcfgCMD_MSG_330)xmlSerialaizer.Deserialize(fr);
+                fr.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error! B330 cfg_CMD_MSG_330!");
+                Debug.WriteLine("Исключение:" + ex);
+                MessageBox.Show("Проблема с конфигурационными файлами Б330!");
+            }
+
+
+            // получаем выбранный файл
+            filename = "cfg_B330.dat";//тут храним конфигурационные данные блока питания : IP адреса блока и его сервера
+            try
+            {
+                XmlSerializer xmlSerialaizer = new XmlSerializer(typeof(Config_B330));
+                FileStream fr = new FileStream(filename, FileMode.Open);
+                cfg = (Config_B330)xmlSerialaizer.Deserialize(fr);
+                fr.Close();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("B330 Config_B330!");
+                Debug.WriteLine("Исключение:" + ex);
+                MessageBox.Show("Проблема с конфигурационными файлами Б330!");
+            }
+
+            return error;
+        }
+
+        private void btn_corr_req_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[1];          
+
+                a[0] = (byte)(0);//
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_REQ,//
+                    a,  //данные
+                    1,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
         }
     }
 }
