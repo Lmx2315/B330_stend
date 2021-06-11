@@ -84,10 +84,11 @@ namespace stnd_72_v2
         int sch_packet = 0;
 
         public Config cfg = new Config();//тут храним конфигурацию , будем брать её из файла
-
         form_consol1 newForm;
+        UdpClient client = new UdpClient();
 
-        UdpClient client = new UdpClient();  
+        public double [] K_corr_I = new double[8];//массив для хранения корректирующих коэффициентов 
+        public double [] K_corr_U = new double[8];
 
         //----------ETH------------
         UdpClient _server = null;
@@ -757,19 +758,25 @@ namespace stnd_72_v2
                 {
                     for (int l=0;l<8;l++)
                     {
-                        tmp0 = (Arr[0+q] << 24) + (Arr[1+q] << 16) + (Arr[2+q] << 8) + (Arr[3+q] << 0);
-                        tmp_i[i] = tmp0;
+                        tmp0 = (int)(Arr[0+q] << 24) + (Arr[1+q] << 16) + (Arr[2+q] << 8) + (Arr[3+q] << 0);
+                        tmp_i[l] = (double)tmp0/1000;
                         q = q + 4;
-                        Console.WriteLine(tmp_i[i]);
+                        Console.WriteLine(tmp_i[l]);
                     }
 
                     for (int l = 0; l < 8; l++)
                     {
-                        tmp0 = (Arr[0 + q] << 24) + (Arr[1 + q] << 16) + (Arr[2 + q] << 8) + (Arr[3 + q] << 0);
-                        tmp_u[i] = tmp0;
+                        tmp0 = (int)(Arr[0 + q] << 24) + (Arr[1 + q] << 16) + (Arr[2 + q] << 8) + (Arr[3 + q] << 0);
+                        tmp_u[l] = (double)tmp0 /1000;
                         q = q + 4;
-                        Console.WriteLine(tmp_u[i]);
+                        Console.WriteLine(tmp_u[l]);
                     }
+
+                        K_corr_I = new double[8];
+                        K_corr_U = new double[8];
+                        Array.Copy(tmp_i, K_corr_I, 8);
+                        Array.Copy(tmp_u, K_corr_U, 8);
+                        
                 }
           
                 offset = offset + 24 + j;

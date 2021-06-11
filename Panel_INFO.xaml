@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:stnd_72_v2"
         mc:Ignorable="d"
-        Title="Panel_INFO" Height="460" Width="780"
+        Title="Panel_INFO" Height="480" Width="780"
         Closing= "DataWindow_Closing"
         >
     <Grid>
@@ -71,6 +71,41 @@
         <TextBlock x:Name="txt_corr_1_Copy" HorizontalAlignment="Left" Margin="32,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
         <Button x:Name="btn_ch1_corr" Content="запись" HorizontalAlignment="Left" Margin="41,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch1_corr_Click"/>
         <Button x:Name="btn_corr_req" Content="чтение" HorizontalAlignment="Left" Margin="41,401,0,0" VerticalAlignment="Top" Width="51" Click="btn_corr_req_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy1" HorizontalAlignment="Left" Margin="124,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch2_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="124,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch2_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="124,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy2" HorizontalAlignment="Left" Margin="124,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch2_corr" Content="запись" HorizontalAlignment="Left" Margin="133,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch2_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy3" HorizontalAlignment="Left" Margin="211,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch3_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="211,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch3_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="211,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy4" HorizontalAlignment="Left" Margin="211,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch3_corr" Content="запись" HorizontalAlignment="Left" Margin="220,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch3_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy5" HorizontalAlignment="Left" Margin="303,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch4_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="303,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch4_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="303,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy6" HorizontalAlignment="Left" Margin="303,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch4_corr" Content="запись" HorizontalAlignment="Left" Margin="312,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch4_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy7" HorizontalAlignment="Left" Margin="393,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch5_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="393,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch5_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="393,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy8" HorizontalAlignment="Left" Margin="393,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch5_corr" Content="запись" HorizontalAlignment="Left" Margin="402,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch5_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy9" HorizontalAlignment="Left" Margin="485,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch6_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="485,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch6_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="485,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy10" HorizontalAlignment="Left" Margin="485,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch6_corr" Content="запись" HorizontalAlignment="Left" Margin="494,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch6_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy11" HorizontalAlignment="Left" Margin="572,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch7_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="572,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch7_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="572,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy12" HorizontalAlignment="Left" Margin="572,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch7_corr" Content="запись" HorizontalAlignment="Left" Margin="581,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch7_corr_Click"/>
+        <TextBlock x:Name="txt_corr_1_Copy13" HorizontalAlignment="Left" Margin="664,284,0,0" TextWrapping="Wrap" Text="Коррекция I" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <TextBox x:Name="txt_I_ch8_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="664,305,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="txt_U_ch8_corr" TextAlignment="Right" HorizontalAlignment="Left" Height="23" Margin="664,346,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="75"/>
+        <TextBlock x:Name="txt_corr_1_Copy14" HorizontalAlignment="Left" Margin="664,328,0,0" TextWrapping="Wrap" Text="Коррекция U" VerticalAlignment="Top" RenderTransformOrigin="1.229,0.385"/>
+        <Button x:Name="btn_ch8_corr" Content="запись" HorizontalAlignment="Left" Margin="673,374,0,0" VerticalAlignment="Top" Width="51" Click="btn_ch8_corr_Click"/>
 
     </Grid>
 </Window>

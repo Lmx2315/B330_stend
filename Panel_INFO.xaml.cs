@@ -109,8 +109,34 @@ namespace stnd_72_v2
                 if (main.CH6.PWR == 1) btn_ch6.Content = "выкл"; else btn_ch6.Content = "вкл";
                 if (main.CH7.PWR == 1) btn_ch7.Content = "выкл"; else btn_ch7.Content = "вкл";
                 if (main.CH8.PWR == 1) btn_ch8.Content = "выкл"; else btn_ch8.Content = "вкл";
-         
-                    main.FLAG_NEW_DATA = 0;
+
+                if (main.K_corr_I!=null)
+                {
+                    txt_I_ch1_corr.Text = main.K_corr_I[0].ToString();
+                    txt_I_ch2_corr.Text = main.K_corr_I[1].ToString();
+                    txt_I_ch3_corr.Text = main.K_corr_I[2].ToString();
+                    txt_I_ch4_corr.Text = main.K_corr_I[3].ToString();
+                    txt_I_ch5_corr.Text = main.K_corr_I[4].ToString();
+                    txt_I_ch6_corr.Text = main.K_corr_I[5].ToString();
+                    txt_I_ch7_corr.Text = main.K_corr_I[6].ToString();
+                    txt_I_ch8_corr.Text = main.K_corr_I[7].ToString();
+                    main.K_corr_I = null;
+                }
+
+                if (main.K_corr_U!=null)
+                {
+                    txt_U_ch1_corr.Text = main.K_corr_U[0].ToString();
+                    txt_U_ch2_corr.Text = main.K_corr_U[1].ToString();
+                    txt_U_ch3_corr.Text = main.K_corr_U[2].ToString();
+                    txt_U_ch4_corr.Text = main.K_corr_U[3].ToString();
+                    txt_U_ch5_corr.Text = main.K_corr_U[4].ToString();
+                    txt_U_ch6_corr.Text = main.K_corr_U[5].ToString();
+                    txt_U_ch7_corr.Text = main.K_corr_U[6].ToString();
+                    txt_U_ch8_corr.Text = main.K_corr_U[7].ToString();
+                    main.K_corr_U = null;
+                }
+
+                main.FLAG_NEW_DATA = 0;
             }
         }
 
@@ -394,6 +420,384 @@ namespace stnd_72_v2
                 a[2] = (byte)(k_u >> 16);
                 a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
                 a[0] = (byte)(0);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch2_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch2_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch2_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(1);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(1);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch3_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch3_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch3_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(2);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(2);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch4_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch4_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch4_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(3);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(3);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch5_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch5_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch5_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(4);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(4);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch6_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch6_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch6_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(5);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(5);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch7_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch7_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch7_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(6);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(6);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_U,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+            }
+
+            Debug.WriteLine("k_i:" + k_i);
+            Debug.WriteLine("k_u:" + k_u);
+        }
+
+        private void btn_ch8_corr_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow main = this.Owner as MainWindow;
+            byte[] a = new byte[5];
+            int k_i = 1;
+            int k_u = 1;
+            int error = 0;
+
+            try
+            {
+                k_i = Convert.ToInt32(Convert.ToDouble(txt_I_ch8_corr.Text) * 1000);
+                k_u = Convert.ToInt32(Convert.ToDouble(txt_U_ch8_corr.Text) * 1000);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Поставь запятую, а не точку!");
+                error = 1;
+            }
+
+            if (error == 0)
+            {
+                a[4] = (byte)(k_i >> 0);
+                a[3] = (byte)(k_i >> 8);
+                a[2] = (byte)(k_i >> 16);
+                a[1] = (byte)(k_i >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(7);//номер канала
+
+                main.UDP_SEND
+                    (
+                    cfg_CMD_MSG.CMD_Corr_I,//
+                    a,  //данные
+                    5,  //число данных в байтах
+                    0   //время исполнения 0 - значит сразу как сможешь
+                    );
+
+                a[4] = (byte)(k_u >> 0);
+                a[3] = (byte)(k_u >> 8);
+                a[2] = (byte)(k_u >> 16);
+                a[1] = (byte)(k_u >> 25); //в младшем адресе находятся старшие байты числа!!!
+                a[0] = (byte)(7);//номер канала
 
                 main.UDP_SEND
                     (
